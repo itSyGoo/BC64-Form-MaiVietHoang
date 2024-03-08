@@ -4,25 +4,26 @@ import ProductForm from "./ProductForm";
 export default class ReactForm extends Component {
   state = {
     arrSinhVien: [
-      {
-        maSV: 1,
-        hoTen: "Nguyen Van A",
-        email: "abc@gmail.com",
-        soDT: "012345678",
-      },
-      {
-        maSV: 2,
-        hoTen: "Nguyen Van B",
-        email: "xyz@gmail.com",
-        soDT: "012345679",
-      },
+      // {
+      //   maSV: 1,
+      //   hoTen: "Nguyen Van A",
+      //   email: "abc@gmail.com",
+      //   soDT: "012345678",
+      // },
+      // {
+      //   maSV: 2,
+      //   hoTen: "Nguyen Van B",
+      //   email: "xyz@gmail.com",
+      //   soDT: "012345679",
+      // },
     ],
     sinhVienEdit: {
-      maSV: 1,
-      hoTen: "Nguyen Van A",
-      email: "abc@gmail.com",
-      soDT: "012345678",
+      // maSV: 1,
+      // hoTen: "Nguyen Van A",
+      // email: "abc@gmail.com",
+      // soDT: "012345678",
     },
+    searchTerm: "",
   };
   handleAddProduct = (proClick) => {
     console.log("proClick: ", proClick);
@@ -32,7 +33,7 @@ export default class ReactForm extends Component {
       arrSinhVien: arrUpdate,
     });
   };
-  handleDeleteProduct = (maSinhVien) => {
+  handleDeleteSinhVien = (maSinhVien) => {
     let newArrSV = this.state.arrSinhVien.filter(
       (item) => item.maSV != maSinhVien
     );
@@ -47,12 +48,25 @@ export default class ReactForm extends Component {
     let index = this.state.arrSinhVien.findIndex(
       (item) => item.maSV == sinhVienUpdate.maSV
     );
-    this.state.arrSinhVien[index] = sinhVienUpdate;
-    this.setState({
-      arrSinhVien: this.state.arrSinhVien,
-    });
+    if (index !== -1) {
+      let newArrSinhVien = [...this.state.arrSinhVien];
+      newArrSinhVien[index] = sinhVienUpdate;
+      this.setState({ arrSinhVien: newArrSinhVien });
+    }
+  };
+
+  handleSearchChange = (event) => {
+    this.setState({ searchTerm: event.target.value });
   };
   render() {
+    const filteredSinhVien = this.state.arrSinhVien.filter((sinhVien) => {
+      return (
+        sinhVien.hoTen
+          .toLowerCase()
+          .includes(this.state.searchTerm.toLowerCase()) ||
+        sinhVien.maSV.toString().includes(this.state.searchTerm)
+      );
+    });
     return (
       <div>
         <ProductForm
@@ -60,6 +74,15 @@ export default class ReactForm extends Component {
           sinhVienEdit={this.state.sinhVienEdit}
           handleAddProduct={this.handleAddProduct}
         />
+        <div className="container mt-4">
+          <input
+            type="text"
+            placeholder="Tìm kiếm sinh viên..."
+            value={this.state.searchTerm}
+            onChange={this.handleSearchChange}
+            className="form-control mb-3"
+          />
+        </div>
         <table className="table container mt-4">
           <thead className="container text-white text-center bg-dark">
             <tr className="table-dark">
@@ -71,7 +94,7 @@ export default class ReactForm extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.arrSinhVien.map((sinhVien) => {
+            {filteredSinhVien.map((sinhVien) => {
               return (
                 <tr key={sinhVien.maSV}>
                   <td>{sinhVien.maSV}</td>
@@ -89,7 +112,7 @@ export default class ReactForm extends Component {
                     </button>
                     <button
                       onClick={() => {
-                        this.handleDeleteProduct(sinhVien.maSV);
+                        this.handleDeleteSinhVien(sinhVien.maSV);
                       }}
                       className="btn btn-danger"
                     >

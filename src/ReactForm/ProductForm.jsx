@@ -15,6 +15,7 @@ export default class ProductForm extends Component {
       soDT: "",
     },
     isSubmit: false,
+    prevSinhVien: "",
   };
   handleChangeInput = (e) => {
     let tag = e.target;
@@ -93,12 +94,26 @@ export default class ProductForm extends Component {
     e.preventDefault();
     let { handleAddProduct } = this.props;
     handleAddProduct(this.state.value);
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        value: {
+          maSV: "",
+          hoTen: "",
+          email: "",
+          soDT: "",
+        },
+      };
+    });
   };
-  static getDerivedStateFromProps(newProps, currentState) {
-    if (newProps.sinhVienEdit.maSV !== currentState.value.maSV) {
-      currentState.value = { ...newProps.sinhVienEdit };
+  static getDerivedStateFromProps(props, currentState) {
+    if (props.sinhVienEdit.maSV !== currentState.prevSinhVien) {
+      return {
+        value: { ...props.sinhVienEdit },
+        prevSinhVien: props.sinhVienEdit.maSV,
+      };
     }
-    return currentState;
+    return null;
   }
   render() {
     let { maSV, hoTen, email, soDT } = this.state.value;
